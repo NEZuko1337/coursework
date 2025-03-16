@@ -17,6 +17,7 @@ dependencies = [
     "psycopg2>=2.9.10",
     "pydantic-settings>=2.8.1",
     "python-json-logger>=3.3.0",
+    "python-multipart>=0.0.20",
     "ruff>=0.11.0",
     "uvicorn>=0.34.0",
 ]

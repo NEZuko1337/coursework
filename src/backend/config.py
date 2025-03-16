@@ -28,6 +28,7 @@ class PostgresConfig(BaseSettings, env_prefix="DB_"):
 class AppConfig(BaseSettings, env_prefix="APP_"):
     secret_key: SecretStr
     api_version: str = "v1"
+    debug: bool = False
 
     @property
     def api_version_prefix(self):

@@ -3,6 +3,7 @@ import logging
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 from pythonjsonlogger import jsonlogger
 
@@ -11,7 +12,7 @@ from src.backend.config import config
 from src.backend.exceptions import BaseAPIException
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 logHandler = logging.StreamHandler()
 formatter = jsonlogger.JsonFormatter(fmt="%(levelname)s %(name)s %(message)s")
@@ -42,6 +43,13 @@ async def unicorn_exception_handler(request: Request, exc: BaseAPIException):
 instrumentator = Instrumentator().instrument(app)
 
 app.include_router(v1_router, prefix=config.appconfig.api_version_prefix)
+app.add_middleware(
+    middleware_class=CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "OPTIONS", "HEAD"],
+    allow_headers=["*"],
+)
 
 LOGGING_CONFIG = {
     "version": 1,
