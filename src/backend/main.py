@@ -1,5 +1,6 @@
 import logging
 
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -83,6 +84,7 @@ LOGGING_CONFIG = {
     },
 }
 
+app.mount("/", StaticFiles(directory="src/frontend/", html=True), name="html")
 if __name__ == "__main__":
     uvicorn.run(
         app,

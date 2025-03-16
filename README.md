@@ -17,3 +17,5 @@ uv run python -m uvicorn src.backend.main:app --reload
 ```
 
 **Дока лежит по localhost/docs**
+
+**Добавить докерфайл + компоуз + починить фронт**

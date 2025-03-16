@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оптимизация назначений | Решение задачи о назначениях</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --border-radius: 0.5rem;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo i {
+            font-size: 1.75rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        
+        nav a:hover {
+            opacity: 0.8;
+        }
+        
+        .hero {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+        
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+        
+        .hero-text {
+            flex: 1;
+        }
+        
+        .hero-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero-text p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: white;
+            color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--gray-100);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        section {
+            padding: 4rem 0;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-icon i {
+            font-size: 1.25rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .feature-card p {
+            color: var(--gray-600);
+        }
+        
+        .upload-section {
+            background-color: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            text-align: center;
+        }
+        
+        .upload-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            background-color: white;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover, .upload-area.dragging {
+            border-color: var(--primary);
+            background-color: var(--gray-100);
+        }
+        
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .upload-text h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .upload-text p {
+            color: var(--gray-500);
+            margin-bottom: 1rem;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            display: none;
+        }
+        
+        .file-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            background-color: var(--gray-100);
+            border-radius: 0.25rem;
+            margin-right: 1rem;
+        }
+        
+        .file-icon i {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .file-size {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .file-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: var(--gray-100);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .file-action:hover {
+            background-color: var(--gray-200);
+            color: var(--dark);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .table-section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+        
+        th {
+            background-color: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        tr:hover {
+            background-color: var(--gray-50);
+        }
+        
+        .highlight {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .info-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .info-card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+        
+        .info-card-title {
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        .info-card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-card-desc {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        footer {
+            background-color: var(--gray-800);
+            color: white;
+            padding: 2rem 0;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-copyright {
+            color: var(--gray-400);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        /* Database information section */
+        .database-info {
+            margin-top: 2rem;
+            background-color: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+        }
+        
+        .database-info h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .database-info p {
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+        }
+        
+        /* History section */
+        .history-section {
+            margin-top: 3rem;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .history-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .history-filters {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .history-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .history-card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .history-card-title {
+            font-weight: 600;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .history-card-date {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        .history-card-summary {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .history-card-stat {
+            flex: 1;
+        }
+        
+        .history-card-stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+        
+        .history-card-stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        .history-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .history-card-footer-text {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        .history-card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .no-history {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        .no-history-icon {
+            font-size: 3rem;
+            color: var(--gray-300);
+            margin-bottom: 1.5rem;
+        }
+        
+        .no-history-text {
+            font-size: 1.25rem;
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        .fade-in-delay-1 {
+            animation: fadeIn 0.6s ease forwards 0.2s;
+            opacity: 0;
+        }
+        
+        .fade-in-delay-2 {
+            animation: fadeIn 0.6s ease forwards 0.4s;
+            opacity: 0;
+        }
+        
+        /* Results section */
+        .results-section {
+            display: none;
+            margin-top: 3rem;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .results-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .results-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .path-visualization {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 2rem;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-project-diagram"></i>
+                <span>OptimAssign</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">О проекте</a></li>
+                    <li><a href="#upload">Загрузка данных</a></li>
+                    <li><a href="#example">Пример</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text fade-in">
+                    <h1>Оптимизация задачи о назначениях</h1>
+                    <p>Определите оптимальное распределение ресурсов для максимизации прибыли с помощью нашего инструмента анализа и оптимизации.</p>
+                    <a href="#upload" class="btn btn-primary">
+                        <i class="fas fa-upload"></i>
+                        Загрузить данные
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>О проекте</h2>
+                <p>Наш инструмент помогает решить классическую задачу о назначениях, определяя оптимальное распределение ресурсов для максимизации прибыли.</p>
+            </div>
+
+            <div class="features fade-in-delay-1">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Оптимизация</h3>
+                    <p>Алгоритм находит оптимальное распределение ресурсов, максимизирующее общую прибыль проекта.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Анализ данных</h3>
+                    <p>Визуализация результатов и подробный анализ оптимального пути распределения ресурсов.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Сохранение истории</h3>
+                    <p>Все данные и результаты автоматически сохраняются в базе данных для последующего анализа и сравнения.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="upload">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Загрузка данных</h2>
+                <p>Загрузите Excel файл с данными о начальных вложениях и потенциальной прибыли для анализа.</p>
+            </div>
+
+            <div class="upload-section fade-in-delay-1">
+                <div class="upload-container">
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="upload-text">
+                            <h3>Перетащите файл или нажмите для выбора</h3>
+                            <p>Формат: Excel (.xlsx, .xls)</p>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-upload"></i>
+                                Выбрать файл
+                            </button>
+                        </div>
+                        <input type="file" class="file-input" id="file-input" accept=".xlsx, .xls" />
+                    </div>
+
+                    <div class="uploaded-file" id="uploaded-file">
+                        <div class="file-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name" id="file-name">example.xlsx</div>
+                            <div class="file-size" id="file-size">123 KB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action" id="remove-file">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary submit-btn" id="analyze-btn">
+                        <i class="fas fa-calculator"></i>
+                        Анализировать данные
+                    </button>
+                    
+                    <div class="database-info">
+                        <h3><i class="fas fa-database"></i> Хранение данных</h3>
+                        <p>Все загруженные данные и результаты анализа автоматически сохраняются в защищенной базе данных. Это позволяет:</p>
+                        <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                            <li>Отслеживать историю расчетов</li>
+                            <li>Сравнивать результаты разных наборов данных</li>
+                            <li>Анализировать эффективность различных распределений</li>
+                        </ul>
+                        <p>Каждый расчет связан с исходными данными, что обеспечивает полную прозрачность и воспроизводимость результатов.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="example">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2>Пример данных</h2>
+                <p>Ниже представлен пример формата данных для анализа. Строки представляют начальные вложения, столбцы — потенциальную прибыль.</p>
+            </div>
+
+            <div class="table-section fade-in-delay-1">
+                <div class="table-header">
+                    <div class="table-title">Пример матрицы затрат и прибыли</div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>C</th>
+                                <th>D</th>
+                                <th>E</th>
+                                <th>F</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1</strong></td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2</strong></td>
+                                <td>10</td>
+                                <td>2</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3</strong></td>
+                                <td>20</td>
+                                <td>3</td>
+                                <td>5</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>4</strong></td>
+                                <td>30</td>
+                                <td>4</td>
+                                <td>6</td>
+                                <td>5</td>
+                                <td>6</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>5</strong></td>
+                                <td>40</td>
+                                <td>6</td>
+                                <td>7</td>
+                                <td>5</td>
+                                <td>7</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-4" style="margin-top: 1rem;">
+                    <small>Первый столбец (А) показывает начальные вложения, остальные столбцы (B-F) — потенциальную прибыль для каждого варианта назначения.</small>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="results" class="results-section">
+        <div class="container">
+            <div class="results-header">
+                <div class="results-title">Результаты анализа</div>
+                <div class="results-actions">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        Экспорт
+                    </button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="summary">Сводка</div>
+                <div class="tab" data-tab="details">Детали</div>
+                <div class="tab" data-tab="visualization"></div>
+            </div>
+
+            <div class="tab-content active" id="summary-content">
+                <div class="info-cards">
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <div class="info-card-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="info-card-title">Максимальная прибыль</div>
+                        </div>
+                        <div class="info-card-value">25.6</div>
+                        <div class="info-card-desc">Общая прибыль от оптимального распределения</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <div class="info-card-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="info-card-title">Начальные вложения</div>
+                        </div>
+                        <div class="info-card-value">50</div>
+                        <div class="info-card-desc">Оптимальный уровень начальных вложений</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <div class="info-card-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="info-card-title">Рентабельность</div>
+                        </div>
+                        <div class="info-card-value">64%</div>
+                        <div class="info-card-desc">Отношение прибыли к вложениям</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="details-content">
+                <div class="table-section">
+                    <div class="table-header">
+                        <div class="table-title">Детали оптимального распределения</div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Вложение</th>
+                                    <th>Назначение</th>
+                                    <th>Прибыль</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>40</td>
+                                    <td>C</td>
+                                    <td>7</td>
+                                </tr>
+                                <tr>
+                                    <td>30</td>
+                                    <td>B</td>
+                                    <td>6</td>
+                                </tr>
+                                <tr>
+                                    <td>20</td>
+                                    <td>E</td>
+                                    <td>4</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>D</td>
+                                    <td>3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="visualization-content">
+                <div class="path-visualization">
+                    <h3>Визуализация оптимального пути</h3>
+                    <div id="visualization-container" style="height: 400px; margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    &copy; 2025 Соколов Дмитрий Анатольевич. Все права защищены.
+                </div>
+                <div class="footer-links">
+                    <a href="#">Условия использования</a>
+                    <a href="#">Политика конфиденциальности</a>
+                    <a href="#">Контакты</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        BASE_API_URL = 'http://localhost:8000'
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const uploadedFile = document.getElementById('uploaded-file');
+            const fileName = document.getElementById('file-name');
+            const fileSize = document.getElementById('file-size');
+            const removeFile = document.getElementById('remove-file');
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const resultsSection = document.getElementById('results');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Hide the visualization tab at load
+            const visualizationTab = document.querySelector('.tab[data-tab="visualization"]');
+            const visualizationContent = document.getElementById('visualization-content');
+            
+            if (visualizationTab) {
+                visualizationTab.style.display = 'none';
+            }
+            if (visualizationContent) {
+                visualizationContent.style.display = 'none';
+            }
+        
+            // Tab switching functionality
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Skip if trying to click on visualization tab
+                    if (this.getAttribute('data-tab') === 'visualization') {
+                        return;
+                    }
+                    
+                    // Remove active class from all tabs and content
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-content`).classList.add('active');
+                });
+            });
+
+
+            // Исправление для первого графика - проверка на наличие данных и контейнера
+            function createVisualization(result) {
+                // Проверяем, что есть контейнер
+                const ctx = document.getElementById('visualization-container');
+                if (!ctx) {
+                    console.error('Container for visualization not found');
+                    return;
+                }
+                
+                // Проверяем, что есть данные предприятий
+                if (!result.statistics || !result.statistics.enterprises || !Array.isArray(result.statistics.enterprises)) {
+                    console.error('No enterprise data found for visualization');
+                    return;
+                }
+                
+                const enterprises = result.statistics.enterprises;
+                if (enterprises.length === 0) {
+                    console.error('Enterprise array is empty');
+                    return;
+                }
+                
+                // Получаем данные для графика
+                const labels = enterprises.map(e => `Предприятие ${e.enterprise_id}`);
+                const investmentData = enterprises.map(e => e.investment);
+                const profitData = enterprises.map(e => e.profit);
+                const roiData = enterprises.map(e => e.roi * 100);
+                
+                // Если уже есть график, уничтожаем его
+                if (window.optimChart) {
+                    window.optimChart.destroy();
+                }
+                
+                try {
+                    // Создаем новый график
+                    window.optimChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Инвестиции',
+                                    data: investmentData,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Прибыль',
+                                    data: profitData,
+                                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false, // Позволяет контролировать размер
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Значение'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Предприятия'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Распределение инвестиций и прибыли по предприятиям'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        afterBody: function(context) {
+                                            const index = context[0].dataIndex;
+                                            return `ROI: ${roiData[index].toFixed(1)}%`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    console.log('Bar chart created successfully');
+                } catch (error) {
+                    console.error('Error creating bar chart:', error);
+                }
+                
+                // Для круговой диаграммы ROI устанавливаем меньший размер
+                const roiCtx = document.createElement('canvas');
+                roiCtx.id = 'roi-chart';
+                roiCtx.style.maxHeight = '300px'; // Уменьшаем высоту
+                roiCtx.style.maxWidth = '500px';  // Ограничиваем ширину
+                
+                // Добавляем на страницу
+                const vizContainer = document.getElementById('visualization-content');
+                vizContainer.appendChild(document.createElement('hr'));
+                
+                const roiTitle = document.createElement('h3');
+                roiTitle.textContent = 'Распределение рентабельности инвестиций (ROI)';
+                vizContainer.appendChild(roiTitle);
+                
+                // Создаем контейнер для ограничения размера
+                const roiContainer = document.createElement('div');
+                roiContainer.style.maxWidth = '500px'; 
+                roiContainer.style.margin = '0 auto'; // Центрируем
+                roiContainer.appendChild(roiCtx);
+                vizContainer.appendChild(roiContainer);
+                
+                try {
+                    // Создаем круговую диаграмму ROI с меньшим размером
+                    new Chart(roiCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: roiData,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.7)',
+                                    'rgba(54, 162, 235, 0.7)',
+                                    'rgba(255, 206, 86, 0.7)',
+                                    'rgba(75, 192, 192, 0.7)',
+                                    'rgba(153, 102, 255, 0.7)',
+                                    'rgba(255, 159, 64, 0.7)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Доля каждого предприятия в общей рентабельности'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            return `${label}: ${value.toFixed(1)}%`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    console.log('Pie chart created successfully');
+                } catch (error) {
+                    console.error('Error creating pie chart:', error);
+                }
+            }
+        
+            // Отображение выбранного файла
+            function displayFileDetails(file) {
+                fileName.textContent = file.name;
+                fileSize.textContent = `${Math.round(file.size / 1024)} KB`;
+                uploadedFile.style.display = 'block';
+                uploadArea.style.display = 'none';
+            }
+        
+            // Отображение результатов (обновленная функция для нового формата API)
+            function displayResults(result) {
+                // Получаем элементы для обновления
+                const infoCards = document.querySelectorAll('.info-card-value');
+                
+                if (infoCards && infoCards.length >= 3) {
+                    // Обновляем максимальную прибыль
+                    infoCards[0].textContent = result.max_profit;
+                    
+                    // Обновляем начальные вложения из statistics.total_investment
+                    if (result.statistics && result.statistics.total_investment !== undefined) {
+                        infoCards[1].textContent = result.statistics.total_investment;
+                    }
+                    
+                    // Обновляем рентабельность (ROI в процентах) из statistics.roi
+                    if (result.statistics && result.statistics.roi !== undefined) {
+                        infoCards[2].textContent = `${(result.statistics.roi * 100).toFixed(0)}%`;
+                    }
+                }
+                
+                // Обновляем детали с данными из statistics.enterprises
+                if (result.statistics && result.statistics.enterprises && Array.isArray(result.statistics.enterprises)) {
+                    const detailsTable = document.querySelector('#details-content .table-wrapper table tbody');
+                    if (detailsTable) {
+                        // Очищаем таблицу
+                        detailsTable.innerHTML = '';
+                        
+                        // Добавляем новые строки из массива enterprises
+                        result.statistics.enterprises.forEach(enterprise => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${enterprise.investment}</td>
+                                <td>${enterprise.enterprise_id}</td>
+                                <td>${enterprise.profit}</td>
+                            `;
+                            detailsTable.appendChild(row);
+                        });
+                    }
+                }
+
+                 // Создаем визуализацию
+                createVisualization(result);
+                
+                // Показываем секцию результатов и возвращаем визуализацию
+                visualizationTab.style.display = 'block';
+                visualizationContent.style.display = 'block';
+                
+                // Показываем секцию результатов
+                resultsSection.style.display = 'block';
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        
+            async function sendFile() {
+                const fileInput = document.getElementById('file-input');
+                if (!fileInput.files || !fileInput.files[0]) {
+                    alert('Выберите файл для загрузки');
+                    return;
+                }
+                const file = fileInput.files[0];
+                const formData = new FormData();
+                formData.append('excel_file', file);
+            
+                try {
+                    const response = await fetch(`${BASE_API_URL}/api/v1/files/upload_file/`, {
+                        method: 'POST',
+                        headers: {
+                            'access-token': 'zuko1337'
+                        },
+                        body: formData,
+                    });
+            
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Ошибка ${response.status}: ${errorText}`);
+                    }
+            
+                    const result = await response.json();
+                    console.log('Результат оптимизации:', result);
+                    // Обновление UI с результатами
+                    displayResults(result);
+                } catch (error) {
+                    console.error('Ошибка загрузки файла:', error);
+                    alert('Ошибка при загрузке файла: ' + error.message);
+                }
+            }
+        
+            // Обработчики событий
+            // Выбор файла через клик
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+        
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    displayFileDetails(file);
+                }
+            });
+        
+            // Drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragging');
+            });
+        
+            uploadArea.addEventListener('dragleave', function() {
+                this.classList.remove('dragging');
+            });
+        
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragging');
+        
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    const file = e.dataTransfer.files[0];
+                    fileInput.files = e.dataTransfer.files;
+                    displayFileDetails(file);
+                }
+            });
+        
+            // Удаление выбранного файла
+            removeFile.addEventListener('click', function() {
+                fileInput.value = '';
+                uploadedFile.style.display = 'none';
+                uploadArea.style.display = 'block';
+            });
+        
+            // Обработка нажатия кнопки "Анализировать данные"
+            analyzeBtn.addEventListener('click', function() {
+                // Показываем состояние загрузки
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+                this.disabled = true;
+        
+                sendFile().finally(() => {
+                    setTimeout(() => {
+                        analyzeBtn.innerHTML = '<i class="fas fa-calculator"></i> Анализировать данные';
+                        analyzeBtn.disabled = false;
+                    }, 3000);
+                });
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
