@@ -6,9 +6,9 @@ from fastapi.responses import JSONResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 from pythonjsonlogger import jsonlogger
 
-from src.backned.api.api.v1 import v1_router
-from src.backned.config import config
-from src.backned.exceptions import BaseAPIException
+from src.backend.api.api.v1 import v1_router
+from src.backend.config import config
+from src.backend.exceptions import BaseAPIException
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -41,7 +41,7 @@ async def unicorn_exception_handler(request: Request, exc: BaseAPIException):
 
 instrumentator = Instrumentator().instrument(app)
 
-app.include_router(v1_router, prefix=config.app.api_version_prefix)
+app.include_router(v1_router, prefix=config.appconfig.api_version_prefix)
 
 LOGGING_CONFIG = {
     "version": 1,

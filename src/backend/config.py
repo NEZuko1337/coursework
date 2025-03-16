@@ -25,10 +25,21 @@ class PostgresConfig(BaseSettings, env_prefix="DB_"):
         return f"postgresql://{self.user}:{self.password.get_secret_value()}@{self.host}:{self.port}/{self.name}"
 
 
+class AppConfig(BaseSettings, env_prefix="APP_"):
+    secret_key: SecretStr
+    api_version: str = "v1"
+
+    @property
+    def api_version_prefix(self):
+        return f"/api/{self.api_version.lower()}"
+
+
 class Config(BaseSettings):
     postgres: PostgresConfig
+    appconfig: AppConfig
 
 
 config = Config(
     postgres=PostgresConfig(),
+    appconfig=AppConfig()
 )

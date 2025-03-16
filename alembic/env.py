@@ -1,10 +1,10 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
-from src.backned.db.models.base import Base
 
-from src.backned.config import config as settings
 from alembic import context
+from src.backend.config import config as settings
+from src.backend.db.models.base import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
