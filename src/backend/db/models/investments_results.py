@@ -1,6 +1,6 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
-from sqlalchemy import String, Float
+from sqlalchemy import Float, String
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import Mapped, mapped_column
 

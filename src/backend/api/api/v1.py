@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
 
-from src.backned.api.endpoints import upload_file
+from src.backend.api.endpoints import upload_file
 
 v1_router = APIRouter()
 
