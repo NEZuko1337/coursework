@@ -2,9 +2,8 @@ from io import BytesIO
 
 import pandas as pd
 
-from src.backend.db.schemas.investments_results import (
+from src.backend.db.schemas.investments_results import \
     InvestmentStatisticsSchema
-)
 
 
 class InvestmentOptimizer:

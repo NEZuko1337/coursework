@@ -1,9 +1,8 @@
-from typing import List, Dict, Any
+from datetime import datetime
+from typing import Any, Dict, List
+from uuid import UUID
 
 from pydantic import BaseModel
-
-from uuid import UUID
-from datetime import datetime
 
 
 class EnterpriseStatsSchema(BaseModel):
