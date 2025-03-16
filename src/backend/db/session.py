@@ -31,5 +31,5 @@ class SessionManager:
 
 session_manager = SessionManager(
     db_dsn=config.postgres.get_dsn,
-    echo=config.app.debug,
+    echo=config.appconfig.debug,
 )
