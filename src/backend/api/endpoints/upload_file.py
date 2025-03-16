@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, File, UploadFile, status
 
-from src.backend.db.session import session_manager
 from src.algorithm.algorithm import InvestmentOptimizer
 from src.backend.db.schemas.investments_results import (
-    OptimizationResultSchema, InvestmentsResultCreateSchema
-)
+    InvestmentsResultCreateSchema, OptimizationResultSchema)
+from src.backend.db.session import session_manager
 from src.backend.exceptions import BadRequestError, ServerError
 from src.backend.middlewares.auth import auth_user
 from src.backend.services.investments_results import InvestmentsResultService

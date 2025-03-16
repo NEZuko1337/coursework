@@ -1,14 +1,13 @@
 from typing import List
 from uuid import UUID
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.backend.exceptions import NotFoundError
-from src.backend.repositories.investments_results import (
-    InvestmentsResultRepository
-)
+
 from src.backend.db.schemas.investments_results import (
-    InvestmentsResultSchema,
-    InvestmentsResultCreateSchema
-)
+    InvestmentsResultCreateSchema, InvestmentsResultSchema)
+from src.backend.exceptions import NotFoundError
+from src.backend.repositories.investments_results import \
+    InvestmentsResultRepository
 
 
 class InvestmentsResultService:
