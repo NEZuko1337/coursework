@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -994,7 +996,7 @@
                             <thead>
                                 <tr>
                                     <th>Вложение</th>
-                                    <th>Назначение</th>
+                                    <th>Предприятие</th>
                                     <th>Прибыль</th>
                                 </tr>
                             </thead>
@@ -1028,7 +1030,9 @@
             <div class="tab-content" id="visualization-content">
                 <div class="path-visualization">
                     <h3>Визуализация оптимального пути</h3>
-                    <div id="visualization-container" style="height: 400px; margin-top: 1rem;"></div>
+                    <div id="visualization-container" style="height: 400px; margin-top: 1rem;">
+                        <canvas id="path-visualization-container"></canvas> <!-- Добавьте canvas -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -1041,9 +1045,8 @@
                     &copy; 2025 Соколов Дмитрий Анатольевич. Все права защищены.
                 </div>
                 <div class="footer-links">
-                    <a href="#">Условия использования</a>
-                    <a href="#">Политика конфиденциальности</a>
-                    <a href="#">Контакты</a>
+                    <a href="https://github.com/NEZuko1337">GitHub</a>
+                    <a href="https://t.me/zuko1337">Telegram</a>
                 </div>
             </div>
         </div>
@@ -1097,7 +1100,19 @@
             // Исправление для первого графика - проверка на наличие данных и контейнера
             function createVisualization(result) {
                 // Проверяем, что есть контейнер
-                const ctx = document.getElementById('visualization-container');
+                // Используйте canvas вместо div
+                const canvas = document.getElementById('path-visualization-container');
+                if (!canvas) {
+                    console.error('Canvas element not found');
+                    return;
+                }
+                const ctx = canvas.getContext('2d'); // Получите контекст canvas
+    
+                // Проверьте данные предприятий
+                if (!result.statistics?.enterprises?.length) {
+                    console.error('Invalid enterprise data');
+                    return;
+                }
                 if (!ctx) {
                     console.error('Container for visualization not found');
                     return;
@@ -1121,7 +1136,7 @@
                 const profitData = enterprises.map(e => e.profit);
                 const roiData = enterprises.map(e => e.roi * 100);
                 
-                // Если уже есть график, уничтожаем его
+                  // Уничтожьте предыдущий график, если есть
                 if (window.optimChart) {
                     window.optimChart.destroy();
                 }
@@ -1402,8 +1417,94 @@
                     }, 3000);
                 });
             });
+            // Добавляем обработчик для кнопки экспорта
+            const exportBtn = document.querySelector('.results-actions .btn-primary');
+            exportBtn.addEventListener('click', async () => {
+                try {
+                    // Показываем индикатор загрузки
+                    exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Экспорт...';
+                    
+                    // Получаем последние данные
+                    const response = await fetch(`${BASE_API_URL}/api/v1/files/last_investment/`, {
+                        headers: {
+                            'accept': 'application/json',
+                            'access-token': 'zuko1337'
+                        }
+                    });
+                    
+                    if (!response.ok) throw new Error('Ошибка получения данных');
+                    const data = await response.json();
+
+                    // Конвертируем дату в UTC+3
+                    const createdAt = new Date(data.created_at);
+                    createdAt.setHours(createdAt.getHours() + 3);
+                    const formattedDate = createdAt.toLocaleString('ru-RU', {
+                        timeZone: 'Europe/Moscow',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    // Создаем рабочую книгу Excel
+                    const wb = XLSX.utils.book_new();
+                    
+                    // Основные данные
+                    const mainData = [
+                        ['Название файла', data.file_name],
+                        ['Дата создания', formattedDate],
+                        ['Общие инвестиции', data.total_investment],
+                        ['Максимальная прибыль', data.max_profit],
+                        ['Рентабельность (ROI)', `${(data.roi * 100).toFixed(2)}%`],
+                        [],
+                        ['Распределение по предприятиям'],
+                        ['Предприятие', 'Инвестиции', 'Прибыль', 'ROI (%)']
+                    ];
+
+                    // Добавляем данные предприятий
+                    Object.entries(data.enterprise_details).forEach(([enterprise, details]) => {
+                        mainData.push([
+                            enterprise,
+                            details.investment,
+                            details.profit,
+                            (details.roi * 100).toFixed(2)
+                        ]);
+                    });
+
+                    // Создаем лист
+                    const ws = XLSX.utils.aoa_to_sheet(mainData);
+                    
+                    // Настраиваем стили колонок
+                    ws['!cols'] = [
+                        { wch: 15 },
+                        { wch: 12 },
+                        { wch: 12 },
+                        { wch: 12 }
+                    ];
+
+                    // Добавляем лист в книгу
+                    XLSX.utils.book_append_sheet(wb, ws, 'Основной отчет');
+
+                    // Генерируем файл
+                    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                    
+                    // Скачиваем файл
+                    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `Отчет_${data.file_name.replace('.xlsx', '')}_${formattedDate.replace(/[\/:]/g, '-')}.xlsx`;
+                    link.click();
+                    
+                } catch (error) {
+                    console.error('Ошибка экспорта:', error);
+                    alert('Ошибка при экспорте: ' + error.message);
+                } finally {
+                    // Восстанавливаем кнопку
+                    exportBtn.innerHTML = '<i class="fas fa-download"></i> Экспорт';
+                }
+            })
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

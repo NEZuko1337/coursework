@@ -84,3 +84,12 @@ class InvestmentsResultService:
             async_session=async_session,
             id=investment_id,
         )
+
+    @classmethod
+    async def get_last_investment(cls, async_session: AsyncSession):
+        result = await InvestmentsResultRepository.get_last_investment(
+            async_session=async_session
+        )
+        if not result:
+            raise NotFoundError('Нет ни одного результата инвестирования')
+        return result

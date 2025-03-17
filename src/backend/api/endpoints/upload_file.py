@@ -92,3 +92,22 @@ async def upload_file(
         raise ServerError(f"Ошибка сохранения результатов: {e}")
 
     return result
+
+
+@router.get(
+    path='/last_investment/',
+    status_code=status.HTTP_200_OK
+)
+async def get_last_investment():
+    async_session = session_manager.async_session
+    """
+    Эндпоинт для получения последнего сохраненного результата оптимизации.
+    """
+    try:
+        result = await InvestmentsResultService.get_last_investment(
+            async_session=async_session
+        )
+    except Exception as e:
+        raise ServerError(f"Ошибка получения последнего результата: {e}")
+
+    return result
