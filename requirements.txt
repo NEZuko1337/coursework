@@ -1,0 +1,16 @@
+alembic>=1.15.1
+asyncpg>=0.30.0
+fastapi>=0.115.11
+greenlet>=3.1.1
+httpx>=0.28.1
+isort>=6.0.1
+jinja2>=3.1.6
+openpyxl>=3.1.5
+pandas>=2.2.3
+prometheus-fastapi-instrumentator>=7.0.2
+psycopg2>=2.9.10
+pydantic-settings>=2.8.1
+python-json-logger>=3.3.0
+python-multipart>=0.0.20
+ruff>=0.11.0
+uvicorn>=0.34.0

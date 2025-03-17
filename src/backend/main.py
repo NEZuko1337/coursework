@@ -88,7 +88,7 @@ app.mount("/", StaticFiles(directory="src/frontend/", html=True), name="html")
 if __name__ == "__main__":
     uvicorn.run(
         app,
-        host="localhost",
-        port=8080,
+        host="0.0.0.0",
+        port=8000,
         log_config=LOGGING_CONFIG,
     )
