@@ -1,8 +1,8 @@
 import sqlalchemy as sa
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.backend.db.models.investments_results import InvestmentsResult
 from src.backend.repositories.base import SQLAlchemyRepository
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class InvestmentsResultRepository(SQLAlchemyRepository):
