@@ -111,3 +111,21 @@ async def get_last_investment():
         raise ServerError(f"Ошибка получения последнего результата: {e}")
 
     return result
+
+@router.get(
+    path='/investments/',
+    status_code=status.HTTP_200_OK,
+)
+async def get_all_investments():
+    async_session = session_manager.async_session
+    """
+    Эндпоинт для получения всех сохраненных результатов оптимизации.
+    """
+    try:
+        results = await InvestmentsResultService.get_all_investments(
+            async_session=async_session
+        )
+    except Exception as e:
+        raise ServerError(f"Ошибка получения всех результатов: {e}")
+
+    return results
